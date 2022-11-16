@@ -8,10 +8,19 @@ data Formula = Formula {
 } deriving (Show)
 
 
+----------- Functions -----------
+
+delByIndex list i = take i list ++ drop (1 + i) list
+
+delInitLast list = 
+    
+f str = [(take 1 str), (tail str)]
+
+
 ------------- Main -------------
 
 main = do
-    putStrLn "Qual o seu nome?"
+    putStrLn "Digite a fórmula:"
     input <- getLine
-    let nome = input
-    putStrLn ("Meu nome é " ++ nome)
+    let formula = input
+    putStrLn (">> " ++ formula)
