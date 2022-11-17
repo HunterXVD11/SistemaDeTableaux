@@ -3,14 +3,22 @@ import Data.List
 ----------- Functions -----------
 
 -- Deleta item de uma lista pelo index
+-- ex: [1, 2, 3, 4]  2 ---> [1, 2, 4] 
+delByIndex :: [a] -> Int -> [a]
 delByIndex list i = take i list ++ drop (1 + i) list
 
 
 -- Deleta primeiro e último elementos de uma lista
+-- ex: [1, 2, 3, 4] ---> [2, 4]
+delInitLast :: [a] -> [a]
 delInitLast list = delByIndex (delByIndex list 0) ((length list) - 2)
 
-appendElement a [] = [a]
-appendElement a (x:xs) = x : appendElement a xs
+
+-- Adiciona um elemento ao final de uma lista
+-- ex: 4  [1, 2, 3] ---> [1, 2, 3, 4]
+appendElement :: a -> [a] -> [a]
+appendElement el [] = [el]
+appendElement el (x:xs) = x : appendElement el xs
 
 
 -- Faz um match da posição de abertura e fechamento de um parêntese
@@ -54,5 +62,7 @@ splitOperator :: [a] -> [[a]]
 splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
     str2 = delInitLast str
 
+processFormula :: String -> [String]
+processFormula str = refactorFormulaList (splitOperator str)
 
 --  [">", "(v(b,a)),(v(c,a))"]
