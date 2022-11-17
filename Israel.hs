@@ -101,8 +101,7 @@ processFormula str = refactorFormulaList (splitOperator str)
     --if (length str > 1)
         --then refactorFormulaList (splitOperator str)
 
-insertStruct :: Bool ->  
-insertStruct struct = (FormulaA True (init (splitOperator struct)) "a" "b")
+insertStruct struct = (FormulaA True "v" 'a' 'b')
 
 main = do
     putStrLn "Digite a fórmula:"
