@@ -46,8 +46,12 @@ firstParenSeg s = f s (minimum (parenPairs s))
 -- ex: "(v(b,a)),(v(c,a))" ---> ["(v(b,a))", "(v(c,a))"]
 -- PRECISA IMPLEMENTAR A CONDIÇÃO CASO O TAMANHO DA STRING SEJA == 3
 splitOperands :: String -> [String]
-splitOperands strFormula = [(fst dirtySeparatedOperands), (drop 1 (snd dirtySeparatedOperands))] where 
-  dirtySeparatedOperands = splitAt ( (snd (minimum (parenPairs strFormula))) + 1) strFormula
+splitOperands strFormula = 
+  if (length strFormula) > 3
+    then [(fst dirtySeparatedOperands), (drop 1 (snd dirtySeparatedOperands))]
+  else
+    [ (fst(splitAt 1 strFormula)), (snd(splitAt 1 strFormula))] 
+  where dirtySeparatedOperands = splitAt ( (snd (minimum (parenPairs strFormula))) + 1) strFormula
 
 
 -- Refaz a lista que representa fórmula, agora com os operandos separados em cada elemento
