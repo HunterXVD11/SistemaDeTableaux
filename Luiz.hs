@@ -1,5 +1,12 @@
 import Data.List
 
+data Formula = Formula { 
+    label     :: Bool,
+    operator  :: String,
+    operand_1 :: Formula,
+    operand_2 :: Formula
+} deriving (Show)
+
 ----------- Functions -----------
 
 -- Deleta item de uma lista pelo index
