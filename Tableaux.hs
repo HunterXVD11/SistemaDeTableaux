@@ -12,9 +12,11 @@ data Formula = Formula {
 
 delByIndex list i = take i list ++ drop (1 + i) list
 
-delInitLast list = 
-    
-f str = [(take 1 str), (tail str)]
+
+
+f str = [(take 1 str), (delInitLast (tail str))] where
+    delInitLast list = delByIndex (delByIndex list 0) ((length list) - 2)
+
 
 
 ------------- Main -------------
