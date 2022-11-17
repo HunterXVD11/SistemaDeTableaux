@@ -1,11 +1,30 @@
 import Data.List
 
-data Formula = Formula { 
-    label     :: Bool,
-    operator  :: String,
-    operand_1 :: Formula,
-    operand_2 :: Formula
-} deriving (Show)
+data Formula = 
+    FormulaFF { 
+      label     :: Bool,
+      operator  :: String,
+      operand_1_formula:: Formula,
+      operand_2_formula :: Formula
+    } | 
+    FormulaAA {
+      label     :: Bool,
+      operator  :: String,
+      operand_1_athomic :: String,
+      operand_2_athomic :: String
+    } | 
+    FormulaAF {
+      label     :: Bool,
+      operator  :: String,
+      operand_1_athomic :: String,
+      operand_2_formula :: Formula
+    } | 
+    FormulaFA {
+      label     :: Bool,
+      operator  :: String,
+      operand_1_formula :: Formula,
+      operand_2_athomic :: String
+    } deriving (Show)
 
 ----------- Functions -----------
 
