@@ -5,7 +5,7 @@ data Formula =
     label     :: Bool,
     operator  :: String,
     operand_1 :: Formula,
-    operand_2 :: Formula}
+    operand_2 :: Formula }
     |FormulaA {
     label     :: Bool,
     operator  :: String,
@@ -21,9 +21,7 @@ data Formula =
     operator  :: String,
     operand_14 :: Formula,
     operand_24 :: Char
-    }
-    
- deriving (Show)
+    } deriving (Show)
 
 ----------- Functions -----------
 
@@ -101,8 +99,6 @@ processFormula str = refactorFormulaList (splitOperator str)
     --if (length str > 1)
         --then refactorFormulaList (splitOperator str)
 
-insertStruct :: Bool ->  
-insertStruct struct = (FormulaA True (init (splitOperator struct)) "a" "b")
 
 main = do
     putStrLn "Digite a fórmula:"
