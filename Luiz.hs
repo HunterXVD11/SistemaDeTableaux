@@ -36,12 +36,9 @@ firstParenSeg s = f s (minimum (parenPairs s))
 
 -- Separar os 2 operandos da string colocando cada um como elemento da lista
 -- ex: [">", "(v(b,a)),(v(c,a))"] -> [">", "(v(b,a))", "(v(c,a))"]
-splitOperands :: String -> (String, String)
-splitOperands strFormula = ((fst dirtySeparatedOperands), (drop 1 (snd dirtySeparatedOperands))) where 
-  dirtySeparatedOperands = splitAt ( (snd (minimum (parenPairs "(v(b,a)),(v(c,a))"))) + 1) "(v(b,a)),(v(c,a))"
-
-
-refactor
+splitOperands :: String -> [String]
+splitOperands strFormula = [(fst dirtySeparatedOperands), (drop 1 (snd dirtySeparatedOperands))] where 
+  dirtySeparatedOperands = splitAt ( (snd (minimum (parenPairs strFormula))) + 1) strFormula
 
 
 -- Separar o operador da fórmula do restante dos operandos
