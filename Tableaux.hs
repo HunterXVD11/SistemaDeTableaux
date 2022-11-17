@@ -42,7 +42,10 @@ firstParenSeg s = f s (minimum (parenPairs s))
 
 -- Separar os 2 operandos da string colocando cada um como elemento da lista
 -- ex: [">", "(v(b,a)),(v(c,a))"] -> [">", "v(b,a)", "v(c,a)"]
-splitOperands =
+splitOperands :: String -> [String]
+splitOperands list = [(take 1 list),str2,str3] where
+                            str2 = firstParenSeg list !! 1
+                            str3 = delete (firstParenSeg list !! 1) list
 
 
 -- Separar o operador da fórmula do restante dos operandos
