@@ -62,7 +62,8 @@ splitOperator :: [a] -> [[a]]
 splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
     str2 = delInitLast str
 
+-- Dado o input de uma fórmula, envolta em parênteses, retorna uma lista com o operador
+-- e os 2 operandos como elementos distintos dessa lista
+-- ex: "(>((v(b,a)),(v(c,a))))" ---> [">","(v(b,a))","(v(c,a))"]
 processFormula :: String -> [String]
 processFormula str = refactorFormulaList (splitOperator str)
-
---  [">", "(v(b,a)),(v(c,a))"]
