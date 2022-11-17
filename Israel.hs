@@ -12,7 +12,7 @@ data Formula = Formula {
 
 delByIndex list i = take i list ++ drop (1 + i) list
 
-f str = [(take 1 str), (delInitLast (tail str))] where
+f str = [(str !! 1), (delInitLast (tail str))] where
     delInitLast list = delByIndex (delByIndex list 0) ((length list) - 2)
 
 
