@@ -67,3 +67,11 @@ splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">","(v(b,a))","(v(c,a))"]
 processFormula :: String -> [String]
 processFormula str = refactorFormulaList (splitOperator str)
+
+
+main = do
+    putStrLn "Digite a fórmula:"
+    input <- getLine
+    let formula = input
+    let teste = processFormula formula
+    print $ teste
