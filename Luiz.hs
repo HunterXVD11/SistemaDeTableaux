@@ -1,11 +1,20 @@
-data Formula = Formula { 
-    label     :: Bool,
-    operator  :: String,
-    operand_1 :: String,
-    operand_2 :: String
-} deriving (Show)
+import Data.List
+
+----------- Functions -----------
+
+-- Deletar item de uma lista pelo index
+delByIndex list i = take i list ++ drop (1 + i) list
 
 
+-- Deletar primeiro e último elementos de uma lista
+delInitLast list = delByIndex (delByIndex list 0) ((length list) - 2)
+
+appendElement a [] = [a]
+appendElement a (x:xs) = x : appendElement a xs
+
+
+-- Faz um match da posição de abertura e fechamento de um parêntese
+-- ex: "a(bc(d))" -> [(1, 7), (4, 6)]
 parenPairs :: String -> [(Int, Int)]
 parenPairs = go 0 []
   where
@@ -17,7 +26,25 @@ parenPairs = go 0 []
     go j acc       (c   : cs) =          go (j + 1) acc       cs
 
 
+-- Pega o primeiro segmento de Parênteses
+-- ex: "a(bc(d))" -> "(bc(d)))"
 firstParenSeg :: String -> String
 firstParenSeg s = f s (minimum (parenPairs s))
   where
     f s (i, j) = take (j - i + 1) (drop i s)
+
+
+-- Separar os 2 operandos da string colocando cada um como elemento da lista
+-- ex: [">", "(v(b,a)),(v(c,a))"] -> [">", "(v(b,a))", "(v(c,a))"]
+splitOperands :: String -> (String, String)
+splitOperands strFormula = ((fst dirtySeparatedOperands), (drop 1 (snd dirtySeparatedOperands))) where 
+  dirtySeparatedOperands = splitAt ( (snd (minimum (parenPairs "(v(b,a)),(v(c,a))"))) + 1) "(v(b,a)),(v(c,a))"
+
+
+refactor
+
+
+-- Separar o operador da fórmula do restante dos operandos
+-- ex: "(>((v(b,a)),(v(c,a))))" -> [">", "(v(b,a)),(v(c,a))"]
+f str = [(take 1 str2), (delInitLast (tail str2))] where
+    str2 = delInitLast str
