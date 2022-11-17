@@ -1,19 +1,26 @@
-import Data.List.Split
+------------- Data -------------
 
---trataString :: String -> [String]
---trataString p1 p2 s = splitOneOf p1 s
+data Formula = Formula { 
+    label     :: Bool,
+    operator  :: String,
+    operand_1 :: String,
+    operand_2 :: String
+} deriving (Show)
 
-wordsWhen     :: (Char -> Bool) -> String -> [String]
-wordsWhen p s =  case dropWhile p s of
-                      " " -> []
-                      s' -> w : wordsWhen p s''
-                            where (w, s'') = break p s'
+
+----------- Functions -----------
+
+delByIndex list i = take i list ++ drop (1 + i) list
+
+f str = [(take 1 str), (delInitLast (tail str))] where
+    delInitLast list = delByIndex (delByIndex list 0) ((length list) - 2)
+
+
+------------- Main -------------
 
 main = do
-    putStrLn "Digite a fórmula a ser avaliada: "
+    putStrLn "Digite a fórmula:"
     input <- getLine
     let formula = input
-    putStrLn ("Sua fórmula é " ++ formula)
-    print $ wordsWhen (==',') formula
-    splitOneof "," "my,comma,separated,list"
-    --print $ trataString "(" formula
+    let teste = f formula
+    print $ teste

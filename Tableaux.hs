@@ -12,11 +12,8 @@ data Formula = Formula {
 
 delByIndex list i = take i list ++ drop (1 + i) list
 
-
-
 f str = [(take 1 str), (delInitLast (tail str))] where
     delInitLast list = delByIndex (delByIndex list 0) ((length list) - 2)
-
 
 
 ------------- Main -------------
@@ -25,4 +22,6 @@ main = do
     putStrLn "Digite a fórmula:"
     input <- getLine
     let formula = input
-    putStrLn (">> " ++ formula)
+    let teste = f formula
+    print $ teste
+
