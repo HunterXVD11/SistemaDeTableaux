@@ -1,27 +1,31 @@
 import Data.List
 
 data Formula = 
-    FormulaP { 
-    label     :: Bool,
-    operator  :: String,
-    operand_1 :: Formula,
-    operand_2 :: Formula }
-    |FormulaA {
-    label     :: Bool,
-    operator  :: String,
-    operand_12 :: Char,
-    operand_22 :: Char}
-    |FormulaAP {
-    label     :: Bool,
-    operator  :: String,
-    operand_13 :: Char,
-    operand_23 :: Formula}
-    |FormulaPA {
-    label     :: Bool,
-    operator  :: String,
-    operand_14 :: Formula,
-    operand_24 :: Char
+    FormulaFF { 
+      label     :: Bool,
+      operator  :: String,
+      operand_1_formula:: Formula,
+      operand_2_formula :: Formula
+    } | 
+    FormulaAA {
+      label     :: Bool,
+      operator  :: String,
+      operand_1_athomic :: String,
+      operand_2_athomic :: String
+    } | 
+    FormulaAF {
+      label     :: Bool,
+      operator  :: String,
+      operand_1_athomic :: String,
+      operand_2_formula :: Formula
+    } | 
+    FormulaFA {
+      label     :: Bool,
+      operator  :: String,
+      operand_1_formula :: Formula,
+      operand_2_athomic :: String
     } deriving (Show)
+
 
 ----------- Functions -----------
 
@@ -96,8 +100,34 @@ splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">","(v(b,a))","(v(c,a))"]
 processFormula :: String -> [String]
 processFormula str = refactorFormulaList (splitOperator str)
-    --if (length str > 1)
-        --then refactorFormulaList (splitOperator str)
+    
+
+insertStruct obj = 
+    if (length x) > 3 && (length x > 3)
+        then FormulaFF True signal x y
+
+    else if (length x) = 3 && (length x = 3)
+        then FormulaAA True signal x y
+
+    else if (length x > 3) && (length x = 3)
+        then FormulaFA True signal x y
+        
+    else
+        FormulaAF True x y
+    where 
+        signal = 
+        x = (refactorFormulaList (splitOperator obj) !! 1)
+        y = (refactorFormulaList (splitOperator obj) !! 2)
+
+--insertRule :: Struct -> Arvore -- Mudar para arvore quando criar o construtor
+--insertRule no =
+  --   if (take 1 no2) == "v" 
+  --      then 
+  --   else if (take 1 no2) == "^" 
+  --      then 
+   --  else 
+   --  where no2 = delInitLast no
+
 
 
 main = do
