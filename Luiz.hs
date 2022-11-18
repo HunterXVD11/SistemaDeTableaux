@@ -1,4 +1,14 @@
+------------------------------------------------------
+--------------------- IMPORTS ------------------------
+------------------------------------------------------
+
 import Data.List
+
+
+
+------------------------------------------------------
+----------------------- DATA -------------------------
+------------------------------------------------------
 
 data Formula = 
     FormulaFF { 
@@ -27,7 +37,10 @@ data Formula =
     } deriving (Show)
 
 
------------ Functions -----------
+
+------------------------------------------------------
+-------------------- FUNCTIONS -----------------------
+------------------------------------------------------
 
 -- Deleta item de uma lista pelo index
 -- ex: [1, 2, 3, 4]  2 ---> [1, 2, 4] 
@@ -69,12 +82,6 @@ firstParenSeg s = f s (minimum (parenPairs s))
     f s (i, j) = take (j - i + 1) (drop i s)
 
 
-numsign n | n < 0     = x
-          | n > 0     = x
-          | otherwise = True
-            where x = False
-
-
 -- Separa os 2 operandos da string colocando cada um como elemento da lista
 -- ex: "(v(b,a)),(v(c,a))" ---> ["(v(b,a))", "(v(c,a))"]
 splitOperands :: String -> [String]
@@ -106,28 +113,42 @@ createFormulaList :: String -> [String]
 createFormulaList str = refactorFormulaList (splitOperator str)
 
 
--- createFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = "FormulaFF"
---                                 | ( ((length x) > 3) && ((length y) == 3) )  = "FormulaFA"
---                                 | ( ((length x) == 3) && ((length y) > 3) )  = "FormulaAF"
---                                 | otherwise                                  = "FormulaAA" 
---                                 where
---                                   formulaList = createFormulaList formulaString
---                                   op = (formulaList !! 0)
---                                   x  = (formulaList !! 1)
---                                   y  = (formulaList !! 2)
+-- Dada uma fórmula em string, envolta em parênteses, retorna o nome do construtor utilizado
+-- para estruturar a fórmula em um data Formula (serve para debugar).
+-- ex: "(>((v(b,a)),(v(c,a))))" ---> FormulaFF
+-- ex: "(v((a),(>(c,d))))" ---> FormulaAF
+defineTypeFormulaData :: String -> String
+defineTypeFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = "FormulaFF"
+                                | ( ((length x) > 3) && ((length y) == 3) )  = "FormulaFA"
+                                | ( ((length x) == 3) && ((length y) > 3) )  = "FormulaAF"
+                                | otherwise                                  = "FormulaAA" 
+                                where
+                                  formulaList = createFormulaList formulaString
+                                  op = (formulaList !! 0)
+                                  x  = (formulaList !! 1)
+                                  y  = (formulaList !! 2)
 
 
--- createFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = FormulaFF (-1) op x y
---                                 | ( ((length x) > 3) && ((length y) == 3) )  = FormulaFA (-1) op x y
---                                 | ( ((length x) == 3) && ((length y) > 3) )  = FormulaAF (-1) op x y
---                                 | otherwise                                  = FormulaAA (-1) op x y
---                                 where
---                                   formulaList = createFormulaList formulaString
---                                   op = (formulaList !! 0)
---                                   x  = (formulaList !! 1)
---                                   y  = (formulaList !! 2)
-
-
+-- Dada uma fórmula em string, envolta em parênteses, retorna toda a estrutura data Formula
+-- criada recursivamente, contendo fórmulas e subfórmulas até chegar nas fórmulas atômicas
+-- ex: "(>((v(b,a)),(v(c,a))))" --->
+--   FormulaFF {
+--     label = -1,
+--     operator = ">",
+--     operand_1_formula = FormulaAA {
+--         label = -1,
+--         operator = "v",
+--         operand_1_athomic = "b",
+--         operand_2_athomic = ",a"
+--     },
+--     operand_2_formula = FormulaAA {
+--         label = -1,
+--         operator = "v",
+--         operand_1_athomic = "c",
+--         operand_2_athomic = ",a"
+--     }
+-- }
+createFormulaData :: String -> Formula
 createFormulaData formulaString | ( ((length x) >= 3) && ((length y) >= 3) )   = FormulaFF (-1) op (createFormulaData x) (createFormulaData y)
                                 | ( ((length x) >= 3) && ((length y) < 3) )  = FormulaFA (-1) op (createFormulaData x) y
                                 | ( ((length x) < 3) && ((length y) >= 3) )  = FormulaAF (-1) op x (createFormulaData y)
@@ -138,6 +159,33 @@ createFormulaData formulaString | ( ((length x) >= 3) && ((length y) >= 3) )   =
                                   x  = (formulaList !! 1)
                                   y  = (formulaList !! 2)
 
+
+-- (Israel que sabe explicar)
+-- (serve para debugar)
+-- ex: ???
+processFormula ::  String -> [String]
+processFormula str = 
+    if (length str) >= 8
+        then
+        if (length x) >= 8 && (length y) >= 8
+            then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 1)++ processFormula (refactorFormulaList (splitOperator str) !! 2))
+        else if (length x) >= 8 && (length y) < 8
+            then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 1))
+        else if (length x) < 8 && (length y) >= 8
+            then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 2))
+        else
+            (refactorFormulaList (splitOperator str))
+    else
+        (refactorFormulaList (splitOperator str))
+    where 
+        x = (refactorFormulaList (splitOperator str) !! 1)
+        y = (refactorFormulaList (splitOperator str) !! 2)
+
+
+
+------------------------------------------------------
+----------------------- MAIN -------------------------
+------------------------------------------------------
 
 main = do
     putStrLn "Digite a fórmula:"
