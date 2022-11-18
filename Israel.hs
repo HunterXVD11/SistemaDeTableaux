@@ -2,25 +2,25 @@ import Data.List
 
 data Formula = 
     FormulaFF { 
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_formula:: Formula,
       operand_2_formula :: Formula
     } | 
     FormulaAA {
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_athomic :: String,
       operand_2_athomic :: String
     } | 
     FormulaAF {
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_athomic :: String,
       operand_2_formula :: Formula
     } | 
     FormulaFA {
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_formula :: Formula,
       operand_2_athomic :: String
@@ -104,16 +104,16 @@ processFormula str = refactorFormulaList (splitOperator str)
 
 insertStruct obj = 
     if (length x) > 3 && (length x > 3)
-        then FormulaFF True signal x y
+        then FormulaFF (-1) signal x y
 
     else if (length x) = 3 && (length x = 3)
-        then FormulaAA True signal x y
+        then FormulaAA (-1) signal x y
 
     else if (length x > 3) && (length x = 3)
-        then FormulaFA True signal x y
+        then FormulaFA (-1) signal x y
         
     else
-        FormulaAF True x y
+        FormulaAF (-1) x y
     where 
         signal = 
         x = (refactorFormulaList (splitOperator obj) !! 1)
