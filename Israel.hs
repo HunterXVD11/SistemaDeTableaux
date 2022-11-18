@@ -84,9 +84,7 @@ splitOperands strFormula =
 -- Refaz a lista que representa fórmula, agora com os operandos separados em cada elemento
 -- ex: [">", "(v(b,a)),(v(c,a))"] ---> [">","(v(b,a))","(v(c,a))"]
 refactorFormulaList :: [String] -> [String]
-refactorFormulaList oldFormulaList = (init oldFormulaList) ++ x where 
-    x = (processFormula (splitOperands (oldFormulaList !! 1)!!0) )
-    xs = x !! 0
+refactorFormulaList oldFormulaList = (init oldFormulaList) ++ (splitOperands (oldFormulaList !! 1))
 
 
 -- Separa o operador da fórmula do restante dos operandos
@@ -103,19 +101,21 @@ processFormula str = refactorFormulaList (splitOperator str)
     
 
 insertStruct obj = 
-    if (length x) > 3 && (length x > 3)
-        then FormulaFF (-1) signal x y
+    --if (length x) > 3 && (length x > 3)
+        --then FormulaFF (-1) op x y
 
-    else if (length x) = 3 && (length x = 3)
-        then FormulaAA (-1) signal x y
+    --if (length x) == 3 && (length x == 3)
+        FormulaAA (-1) op x y
 
-    else if (length x > 3) && (length x = 3)
-        then FormulaFA (-1) signal x y
+    --else if (length x > 3) && (length x == 3)
+        --then FormulaFA (-1) op x y
         
-    else
-        FormulaAF (-1) x y
+    --else
+        --FormulaAF (-1) op x y
+
+
     where 
-        signal = 
+        op = (refactorFormulaList (splitOperator obj) !! 0)
         x = (refactorFormulaList (splitOperator obj) !! 1)
         y = (refactorFormulaList (splitOperator obj) !! 2)
 
