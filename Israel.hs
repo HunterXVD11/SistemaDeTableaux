@@ -1,4 +1,14 @@
+------------------------------------------------------
+--------------------- IMPORTS ------------------------
+------------------------------------------------------
+
 import Data.List
+
+
+
+------------------------------------------------------
+----------------------- DATA -------------------------
+------------------------------------------------------
 
 data Formula = 
     FormulaFF { 
@@ -26,8 +36,12 @@ data Formula =
       operand_2_athomic :: String
     } deriving (Show)
 
+data Arvore a = Nulo | No (Arvore a) a (Arvore a)
+    deriving (Show)
 
------------ Functions -----------
+------------------------------------------------------
+-------------------- FUNCTIONS -----------------------
+------------------------------------------------------
 
 -- Deleta item de uma lista pelo index
 -- ex: [1, 2, 3, 4]  2 ---> [1, 2, 4] 
@@ -71,7 +85,6 @@ firstParenSeg s = f s (minimum (parenPairs s))
 
 -- Separa os 2 operandos da string colocando cada um como elemento da lista
 -- ex: "(v(b,a)),(v(c,a))" ---> ["(v(b,a))", "(v(c,a))"]
--- PRECISA IMPLEMENTAR A CONDIÇÃO CASO O TAMANHO DA STRING SEJA == 3
 splitOperands :: String -> [String]
 splitOperands strFormula = 
   if (length strFormula) > 3
@@ -93,10 +106,64 @@ splitOperator :: [a] -> [[a]]
 splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
     str2 = delInitLast str
 
+
 -- Dado o input de uma fórmula, envolta em parênteses, retorna uma lista com o operador
 -- e os 2 operandos como elementos distintos dessa lista
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">","(v(b,a))","(v(c,a))"]
+createFormulaList :: String -> [String]
+createFormulaList str = refactorFormulaList (splitOperator str)
 
+
+-- Dada uma fórmula em string, envolta em parênteses, retorna o nome do construtor utilizado
+-- para estruturar a fórmula em um data Formula (serve para debugar).
+-- ex: "(>((v(b,a)),(v(c,a))))" ---> FormulaFF
+-- ex: "(v((a),(>(c,d))))" ---> FormulaAF
+defineTypeFormulaData :: String -> String
+defineTypeFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = "FormulaFF"
+                                | ( ((length x) > 3) && ((length y) == 3) )  = "FormulaFA"
+                                | ( ((length x) == 3) && ((length y) > 3) )  = "FormulaAF"
+                                | otherwise                                  = "FormulaAA" 
+                                where
+                                  formulaList = createFormulaList formulaString
+                                  op = (formulaList !! 0)
+                                  x  = (formulaList !! 1)
+                                  y  = (formulaList !! 2)
+
+
+-- Dada uma fórmula em string, envolta em parênteses, retorna toda a estrutura data Formula
+-- criada recursivamente, contendo fórmulas e subfórmulas até chegar nas fórmulas atômicas
+-- ex: "(>((v(b,a)),(v(c,a))))" --->
+--   FormulaFF {
+--     label = -1,
+--     operator = ">",
+--     operand_1_formula = FormulaAA {
+--         label = -1,
+--         operator = "v",
+--         operand_1_athomic = "b",
+--         operand_2_athomic = ",a"
+--     },
+--     operand_2_formula = FormulaAA {
+--         label = -1,
+--         operator = "v",
+--         operand_1_athomic = "c",
+--         operand_2_athomic = ",a"
+--     }
+-- }
+createFormulaData :: String -> Formula
+createFormulaData formulaString | ( ((length x) >= 3) && ((length y) >= 3) )   = FormulaFF (-1) op (createFormulaData x) (createFormulaData y)
+                                | ( ((length x) >= 3) && ((length y) < 3) )  = FormulaFA (-1) op (createFormulaData x) y
+                                | ( ((length x) < 3) && ((length y) >= 3) )  = FormulaAF (-1) op x (createFormulaData y)
+                                | otherwise                                  = FormulaAA (-1) op x y
+                                where
+                                  formulaList = createFormulaList formulaString
+                                  op = (formulaList !! 0)
+                                  x  = (formulaList !! 1)
+                                  y  = (formulaList !! 2)
+
+
+-- (Israel que sabe explicar)
+-- (serve para debugar)
+-- ex: ???
 processFormula ::  String -> [String]
 processFormula str = 
     if (length str) >= 8
@@ -114,35 +181,32 @@ processFormula str =
     where 
         x = (refactorFormulaList (splitOperator str) !! 1)
         y = (refactorFormulaList (splitOperator str) !! 2)
-    
 
-        
-createFormulaList :: String -> [String]
-createFormulaList str = refactorFormulaList (splitOperator str)
-createFormulaData formulaString | ( ((length x) >= 3) && ((length y) >= 3) )   = FormulaFF (-1) op (createFormulaData x) (createFormulaData y)
-                                | ( ((length x) >= 3) && ((length y) < 3) )  = FormulaFA (-1) op (createFormulaData x) y
-                                | ( ((length x) < 3) && ((length y) >= 3) )  = FormulaAF (-1) op x (createFormulaData y)
-                                | otherwise                                  = FormulaAA (-1) op x y
-                                where
-                                  formulaList = createFormulaList formulaString
-                                  op = (formulaList !! 0)
-                                  x  = (formulaList !! 1)
-                                  y  = (formulaList !! 2)
+createArvore:: (Ord a)=> Formula -> Arvore a
+createArvore (x:xs) = createArvore_aux (No Nulo x Nulo) xs
+    where
+        createArvore_aux arvore [] = arvore
+        createArvore_aux arvore (x:xs) = createArvore_aux(insertArvore arvore x) xs
 
---insertRule :: Struct -> Arvore -- Mudar para arvore quando criar o construtor
---insertRule no =
-  --   if (take 1 no2) == "v" 
-  --      then 
-  --   else if (take 1 no2) == "^" 
-  --      then 
-   --  else 
-   --  where no2 = delInitLast no
+insertArvore:: (Ord a) => Arvore a -> a -> Arvore a
+-- Se a subárvore for Nula, então retorna uma subárvore (Nulo x Nulo)
+insertArvore Nulo x = No Nulo x Nulo
+-- Senão teremos duas subárvores: arv1 e arv2
+-- Verifica as regras (NÃO SEI COMO FAZER KKKKK, só escrevi a ideia msm)
+insertArvore (No arv1 v arv2) x
+        | (op = ">") = No arv1 v arv2
+        | (op = "v") = No arv1 v arv2
+        | (op = "^") = No arv1 v arv2
 
 
+
+------------------------------------------------------
+----------------------- MAIN -------------------------
+------------------------------------------------------
 
 main = do
     putStrLn "Digite a fórmula:"
     input <- getLine
     let formula = input
-    let teste = processFormula formula
+    let teste = createFormulaList formula
     print $ teste
