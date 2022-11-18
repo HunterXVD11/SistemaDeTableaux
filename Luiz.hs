@@ -117,9 +117,20 @@ createFormulaList str = refactorFormulaList (splitOperator str)
 --                                   y  = (formulaList !! 2)
 
 
-createFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = FormulaFF (-1) op x y
-                                | ( ((length x) > 3) && ((length y) == 3) )  = FormulaFA (-1) op x y
-                                | ( ((length x) == 3) && ((length y) > 3) )  = FormulaAF (-1) op x y
+-- createFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = FormulaFF (-1) op x y
+--                                 | ( ((length x) > 3) && ((length y) == 3) )  = FormulaFA (-1) op x y
+--                                 | ( ((length x) == 3) && ((length y) > 3) )  = FormulaAF (-1) op x y
+--                                 | otherwise                                  = FormulaAA (-1) op x y
+--                                 where
+--                                   formulaList = createFormulaList formulaString
+--                                   op = (formulaList !! 0)
+--                                   x  = (formulaList !! 1)
+--                                   y  = (formulaList !! 2)
+
+
+createFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = FormulaFF (-1) op (createFormulaData x) (createFormulaData y)
+                                | ( ((length x) > 3) && ((length y) == 3) )  = FormulaFA (-1) op (createFormulaData x) y
+                                | ( ((length x) == 3) && ((length y) > 3) )  = FormulaAF (-1) op x (createFormulaData y)
                                 | otherwise                                  = FormulaAA (-1) op x y
                                 where
                                   formulaList = createFormulaList formulaString

@@ -1,0 +1,77 @@
+========== createFormulaData "(>((v(b,a)),(v(c,a))))" =========
+FormulaFF {
+    label = -1,
+    operator = ">",
+    operand_1_formula = FormulaAA {
+        label = -1,
+        operator = "v",
+        operand_1_athomic = "b",
+        operand_2_athomic = ",a"
+    },
+    operand_2_formula = FormulaAA {
+        label = -1,
+        operator = "v",
+        operand_1_athomic = "c",
+        operand_2_athomic = ",a"
+    }
+}
+================================================================
+
+
+================= createFormulaData "(v(b,a))" =================
+FormulaAA {
+    label = -1,
+    operator = "v",
+    operand_1_athomic = "b",
+    operand_2_athomic = ",a"
+}
+================================================================
+
+
+====================== (v((a),(>(c,d)))) ======================
+FormulaAF {
+    label = -1,
+    operator = "v",
+    operand_1_athomic = "(a)",
+    operand_2_formula = FormulaAA {
+        label = -1,
+        operator = ">",
+        operand_1_athomic = "c",
+        operand_2_athomic = ",d"
+    }
+}
+================================================================
+
+
+======================= (v((>(c,d)),(a))) ======================
+FormulaFA {
+    label = -1,
+    operator = "v",
+    operand_1_formula = FormulaAA {
+        label = -1,
+        operator = ">", 
+        operand_1_athomic = "c", 
+        operand_2_athomic = ",d"
+    },
+    operand_2_athomic = "(a)"
+}
+
+================================================================
+(>((v((^(b,d)),a)),(v(c,a))))
+
+FormulaFF {
+    label = -1,
+    operator = ">",
+    operand_1_formula = FormulaAA {
+        label = -1,
+        operator = "v",
+        operand_1_athomic = "(^(b,d))",
+        operand_2_athomic = "a"
+    }, 
+    operand_2_formula = FormulaAA {
+        label = -1,
+        operator = "v",
+        operand_1_athomic = "c",
+        operand_2_athomic = ",a"
+    }
+}
