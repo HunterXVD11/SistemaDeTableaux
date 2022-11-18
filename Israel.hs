@@ -117,24 +117,17 @@ processFormula str =
     
 
         
-
-insertStruct obj = 
-    --if (length x) > 3 && (length x > 3)
-        --then FormulaFF (-1) op x y
-
-    --if (length x) == 3 && (length x == 3)
-        FormulaAA (-1) op x y
-
-    --else if (length x > 3) && (length x == 3)
-        --then FormulaFA (-1) op x y
-        
-    --else
-        --FormulaAF (-1) op x y
-
-    where 
-        op = (refactorFormulaList (splitOperator obj) !! 0)
-        x = (refactorFormulaList (splitOperator obj) !! 1)
-        y = (refactorFormulaList (splitOperator obj) !! 2)
+createFormulaList :: String -> [String]
+createFormulaList str = refactorFormulaList (splitOperator str)
+createFormulaData formulaString | ( ((length x) >= 3) && ((length y) >= 3) )   = FormulaFF (-1) op (createFormulaData x) (createFormulaData y)
+                                | ( ((length x) >= 3) && ((length y) < 3) )  = FormulaFA (-1) op (createFormulaData x) y
+                                | ( ((length x) < 3) && ((length y) >= 3) )  = FormulaAF (-1) op x (createFormulaData y)
+                                | otherwise                                  = FormulaAA (-1) op x y
+                                where
+                                  formulaList = createFormulaList formulaString
+                                  op = (formulaList !! 0)
+                                  x  = (formulaList !! 1)
+                                  y  = (formulaList !! 2)
 
 --insertRule :: Struct -> Arvore -- Mudar para arvore quando criar o construtor
 --insertRule no =

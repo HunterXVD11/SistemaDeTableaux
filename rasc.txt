@@ -75,3 +75,19 @@ FormulaFF {
         operand_2_athomic = ",a"
     }
 }
+------------------------------------------------------
+FormulaFF {
+    label = -1, 
+    operator = ">", 
+    operand_1_formula = FormulaFA {
+        label = -1, 
+        operator = "v", 
+        operand_1_formula = 
+        FormulaAA {
+            label = -1, 
+            operator = "^", 
+            operand_1_athomic = "b", 
+            operand_2_athomic = ",d"}, 
+            operand_2_athomic = "a"}, 
+            operand_2_formula = 
+            FormulaAA {label = -1, operator = "v", operand_1_athomic = "c", operand_2_athomic = ",a"}}
