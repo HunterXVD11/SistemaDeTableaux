@@ -99,7 +99,7 @@ splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
 
 processFormula ::  String -> [String]
 processFormula str = 
-    if (length str) > 3
+    if (length str) > 8
         then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 1)++ processFormula (refactorFormulaList (splitOperator str) !! 2))
     else
         (refactorFormulaList (splitOperator str))
