@@ -96,9 +96,16 @@ splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
 -- Dado o input de uma fórmula, envolta em parênteses, retorna uma lista com o operador
 -- e os 2 operandos como elementos distintos dessa lista
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">","(v(b,a))","(v(c,a))"]
-processFormula :: String -> [String]
-processFormula str = refactorFormulaList (splitOperator str)
+
+processFormula ::  String -> [String]
+processFormula str = 
+    if (length str) > 3
+        then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 1)++ processFormula (refactorFormulaList (splitOperator str) !! 2))
+    else
+        (refactorFormulaList (splitOperator str))
     
+
+        
 
 insertStruct obj = 
     --if (length x) > 3 && (length x > 3)
@@ -112,7 +119,6 @@ insertStruct obj =
         
     --else
         --FormulaAF (-1) op x y
-
 
     where 
         op = (refactorFormulaList (splitOperator obj) !! 0)
