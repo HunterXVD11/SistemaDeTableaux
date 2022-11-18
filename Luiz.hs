@@ -2,29 +2,30 @@ import Data.List
 
 data Formula = 
     FormulaFF { 
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_formula:: Formula,
       operand_2_formula :: Formula
     } | 
     FormulaAA {
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_athomic :: String,
       operand_2_athomic :: String
     } | 
     FormulaAF {
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_athomic :: String,
       operand_2_formula :: Formula
     } | 
     FormulaFA {
-      label     :: Bool,
+      label     :: Int,
       operator  :: String,
       operand_1_formula :: Formula,
       operand_2_athomic :: String
     } deriving (Show)
+
 
 ----------- Functions -----------
 
@@ -68,9 +69,14 @@ firstParenSeg s = f s (minimum (parenPairs s))
     f s (i, j) = take (j - i + 1) (drop i s)
 
 
+numsign n | n < 0     = x
+          | n > 0     = x
+          | otherwise = True
+            where x = False
+
+
 -- Separa os 2 operandos da string colocando cada um como elemento da lista
 -- ex: "(v(b,a)),(v(c,a))" ---> ["(v(b,a))", "(v(c,a))"]
--- PRECISA IMPLEMENTAR A CONDIÇÃO CASO O TAMANHO DA STRING SEJA == 3
 splitOperands :: String -> [String]
 splitOperands strFormula = 
   if (length strFormula) > 3
@@ -92,16 +98,39 @@ splitOperator :: [a] -> [[a]]
 splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
     str2 = delInitLast str
 
+
 -- Dado o input de uma fórmula, envolta em parênteses, retorna uma lista com o operador
 -- e os 2 operandos como elementos distintos dessa lista
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">","(v(b,a))","(v(c,a))"]
-processFormula :: String -> [String]
-processFormula str = refactorFormulaList (splitOperator str)
+createFormulaList :: String -> [String]
+createFormulaList str = refactorFormulaList (splitOperator str)
+
+
+-- createFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = "FormulaFF"
+--                                 | ( ((length x) > 3) && ((length y) == 3) )  = "FormulaFA"
+--                                 | ( ((length x) == 3) && ((length y) > 3) )  = "FormulaAF"
+--                                 | otherwise                                  = "FormulaAA" 
+--                                 where
+--                                   formulaList = createFormulaList formulaString
+--                                   op = (formulaList !! 0)
+--                                   x  = (formulaList !! 1)
+--                                   y  = (formulaList !! 2)
+
+
+createFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = FormulaFF (-1) op x y
+                                | ( ((length x) > 3) && ((length y) == 3) )  = FormulaFA (-1) op x y
+                                | ( ((length x) == 3) && ((length y) > 3) )  = FormulaAF (-1) op x y
+                                | otherwise                                  = FormulaAA (-1) op x y
+                                where
+                                  formulaList = createFormulaList formulaString
+                                  op = (formulaList !! 0)
+                                  x  = (formulaList !! 1)
+                                  y  = (formulaList !! 2)
 
 
 main = do
     putStrLn "Digite a fórmula:"
     input <- getLine
     let formula = input
-    let teste = processFormula formula
+    let teste = createFormulaList formula
     print $ teste
