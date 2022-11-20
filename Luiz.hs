@@ -11,16 +11,30 @@ import Data.List
 ------------------------------------------------------
 
 data Formula = 
-    Formula { 
-      label     :: Int,
-      operator  :: String,
-      operand_1:: Formula,
-      operand_2 :: Formula
-    } | 
-    Athomic {
-      label :: Int,
-      name :: String
-    } deriving (Show)
+  Formula { 
+    label     :: Bool,
+    operator  :: String,
+    operand_1:: String,
+    operand_2 :: String,
+    final :: Bool
+  } | 
+  Athomic {
+    label :: Bool,
+    name :: String,
+    final :: Bool
+  } deriving (Show)
+
+
+-- data Tree a = Nulo | Node (Tree a) [a] (Tree a)
+--   deriving (Show)
+
+data Tree a = 
+  Nulo |
+  Node {
+    content :: [a],
+    left_child :: Tree a,
+    right_child :: Tree a
+  } deriving (Show)
 
 
 
@@ -87,7 +101,6 @@ refactorFormulaList oldFormulaList = (init oldFormulaList) ++ (splitOperands (ol
 
 -- Separa o operador da fórmula do restante dos operandos
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">", "(v(b,a)),(v(c,a))"]
-
 splitOperator str = 
   if (length str) == 1
     then [str, ""]
@@ -123,30 +136,40 @@ defineTypeFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )  
 -- Dada uma fórmula em string, envolta em parênteses, retorna toda a estrutura data Formula
 -- criada recursivamente, contendo fórmulas e subfórmulas até chegar nas fórmulas atômicas
 -- ex: "(>((v(b,a)),(v(c,a))))" --->
---   FormulaFF {
---     label = -1,
---     operator = ">",
---     operand_1_formula = FormulaAA {
---         label = -1,
---         operator = "v",
---         operand_1_athomic = "b",
---         operand_2_athomic = ",a"
---     },
---     operand_2_formula = FormulaAA {
---         label = -1,
---         operator = "v",
---         operand_1_athomic = "c",
---         operand_2_athomic = ",a"
+-- Formula {
+--     label = -1, 
+--     operator = ">", 
+--     operand_1 = Formula {
+--         label = -1, 
+--         operator = "v", 
+--         operand_1 = Athomic {label = -1, name = "b"}, 
+--         operand_2 = Athomic {label = -1, name = "a"}
+--     }, 
+--     operand_2 = Formula {
+--         label = -1, 
+--         operator = "v", 
+--         operand_1 = Athomic {label = -1, name = "c"}, 
+--         operand_2 = Athomic {label = -1, name = "a"}
 --     }
 -- }
-createFormulaData :: String -> Formula
-createFormulaData formulaString | ( ((length x) == 0) && ((length y) == 0) ) = Athomic (-1) op
-                                | otherwise                                  = Formula (-1) op (createFormulaData x) (createFormulaData y)
-                                where
-                                  formulaList = createFormulaList formulaString
-                                  op = (formulaList !! 0)
-                                  x  = (formulaList !! 1)
-                                  y  = (formulaList !! 2)
+
+-- createFormulaData :: String -> Formula
+-- createFormulaData formulaString | ( ((length x) == 0) && ((length y) == 0) ) = Athomic (-1) op
+--                                 | otherwise                                  = Formula (-1) op (createFormulaData x) (createFormulaData y)
+--                                 where
+--                                   formulaList = createFormulaList formulaString
+--                                   op = (formulaList !! 0)
+--                                   x  = (formulaList !! 1)
+--                                   y  = (formulaList !! 2)
+
+createFormulaData :: String -> Bool -> Formula
+createFormulaData formulaString label | ( ((length x) == 0) && ((length y) == 0) ) = Athomic label op False
+                                      | otherwise                                  = Formula label op x y False
+                                      where
+                                        formulaList = createFormulaList formulaString
+                                        op = (formulaList !! 0)
+                                        x  = (formulaList !! 1)
+                                        y  = (formulaList !! 2)
 
 
 -- (Israel que sabe explicar)
@@ -171,6 +194,82 @@ processFormula str =
         y = (refactorFormulaList (splitOperator str) !! 2)
 
 
+-- applyRule :: Tree Formula -> [Formula]
+applyRule formulaData | ( (label formulaData) == True) && ((operator formulaData) == ">" ) 
+                        = [ [(createFormulaData (operand_1 formulaData) False)], [(createFormulaData (operand_2 formulaData) True)] ]
+
+                      | ( (label formulaData) == False) && ((operator formulaData) == ">" ) 
+                        = [ [(createFormulaData (operand_1 formulaData) True), (createFormulaData (operand_2 formulaData) False)] ]
+
+                      | ( (label formulaData) == True) && ((operator formulaData) == "^" )
+                        = [ [(createFormulaData (operand_1 formulaData) True), (createFormulaData (operand_2 formulaData) True)] ]
+
+                      | ( (label formulaData) == False) && ((operator formulaData) == "^" )
+                        = [ [(createFormulaData (operand_1 formulaData) False)], [(createFormulaData (operand_2 formulaData) False)] ]
+
+                      | ( (label formulaData) == True) && ((operator formulaData) == "v" )
+                        = [ [(createFormulaData (operand_1 formulaData) True)], [(createFormulaData (operand_2 formulaData) True)] ]
+
+                      | ( (label formulaData) == False) && ((operator formulaData) == "v" )
+                        = [ [(createFormulaData (operand_1 formulaData) False), (createFormulaData (operand_2 formulaData) False)] ]
+                      
+                      | ( (label formulaData) == True) && ((operator formulaData) == "~" )
+                        = [ [(createFormulaData (operand_1 formulaData) False)] ]
+                      
+                      | ( (label formulaData) == False) && ((operator formulaData) == "~" )
+                        = [ [(createFormulaData (operand_1 formulaData) True)] ]
+
+
+-- initTree formulaString = Node [createFormulaData formulaString False] Nulo Nulo
+initTree formulaString =
+  if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
+    then Node [formulaData] (growTree (nodeChildrenContents !! 0)) Nulo
+  else  -- se o nó tem 2 filhos, a árvore ramifica
+    Node [formulaData] (growTree(nodeChildrenContents !! 0)) (growTree(nodeChildrenContents !! 1))
+   where
+    formulaData = createFormulaData formulaString False
+    nodeChildrenContents = applyRule formulaData
+
+
+growTreeBLA treeNode = 
+  if (length subformulaMatrix) == 1  -- Se só tem um elemento na matriz de retorno, a árvore NÃO ramifica
+    then (subformulaMatrix !! 0) ++ (tail(content treeNode))
+  else  -- Se tem 2, a árvore ramifica
+    (subformulaMatrix !! 0) -- linha provisória
+  where 
+    subformulaMatrix = applyRule ((content treeNode)!!0)
+
+
+-- growTree formulaString formulaLabel = 
+--   if (length subformulaMatrix) == 1  -- Se só tem um elemento na matriz de retorno, a árvore NÃO ramifica
+--     -- then Node ( (subformulaMatrix !! 0) ++ (tail(content treeNode)) ) 
+--     then Node 
+--   else  -- Se tem 2, a árvore ramifica
+--    Node (subformulaMatrix !! 0) -- linha provisória
+--   where 
+--     treeNode = Node [createFormulaData formulaString formulaLabel] Nulo Nulo
+--     formulaData = createFormulaData formulaString formulaLabel
+--     subformulaMatrix = applyRule formulaData
+
+-- growTree :: [Formula] -> Tree
+growTree nodeContent =
+  if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
+    then Node nodeContent (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo) Nulo  -- ++ TAIL NODECONTENT
+  else
+    Node nodeContent (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo) (Node ((nodeChildrenContents !! 1) ++ (tail nodeContent)) Nulo Nulo)
+  where
+    firstFormulaData = nodeContent !! 0
+    nodeChildrenContents = applyRule firstFormulaData
+
+
+isEven num = if (mod num 2) == 0 then 0 else error "Impar"
+
+
+-- Atributo final::Bool para Athomic!! Quando um athomic "nasce", ele nasce com final = False. 
+-- Na aplicação das regras, se a fórmula for athomic e label = True, quer dizer que ela teve sua 
+-- checagem final e não pode ser mais desenvolvida (final = True). Para parar a montagem da árvore 
+-- do tableaux, todas as formulas predentes no no da arvore Tem que ter final = True (usar um map pra 
+-- verificar isso)
 
 ------------------------------------------------------
 ----------------------- MAIN -------------------------
