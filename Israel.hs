@@ -11,33 +11,18 @@ import Data.List
 ------------------------------------------------------
 
 data Formula = 
-    FormulaFF { 
+    Formula { 
       label     :: Int,
       operator  :: String,
-      operand_1_formula:: Formula,
-      operand_2_formula :: Formula
+      operand_1:: Formula,
+      operand_2 :: Formula
     } | 
-    FormulaAA {
-      label     :: Int,
-      operator  :: String,
-      operand_1_athomic :: String,
-      operand_2_athomic :: String
-    } | 
-    FormulaAF {
-      label     :: Int,
-      operator  :: String,
-      operand_1_athomic :: String,
-      operand_2_formula :: Formula
-    } | 
-    FormulaFA {
-      label     :: Int,
-      operator  :: String,
-      operand_1_formula :: Formula,
-      operand_2_athomic :: String
+    Athomic {
+      label :: Int,
+      name :: String
     } deriving (Show)
 
-data Arvore a = Nulo | No (Arvore a) a (Arvore a)
-    deriving (Show)
+
 
 ------------------------------------------------------
 -------------------- FUNCTIONS -----------------------
@@ -90,7 +75,7 @@ splitOperands strFormula =
   if (length strFormula) > 3
     then [(fst dirtySeparatedOperands), (drop 1 (snd dirtySeparatedOperands))]
   else
-    [ (fst(splitAt 1 strFormula)), (snd(splitAt 1 strFormula))] 
+    [ (fst(splitAt 1 strFormula)), (drop 1 (snd(splitAt 1 strFormula)))] 
   where dirtySeparatedOperands = splitAt ( (snd (minimum (parenPairs strFormula))) + 1) strFormula
 
 
@@ -102,9 +87,13 @@ refactorFormulaList oldFormulaList = (init oldFormulaList) ++ (splitOperands (ol
 
 -- Separa o operador da fórmula do restante dos operandos
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">", "(v(b,a)),(v(c,a))"]
-splitOperator :: [a] -> [[a]]
-splitOperator str = [(take 1 str2), (delInitLast (tail str2))] where
-    str2 = delInitLast str
+
+splitOperator str = 
+  if (length str) == 1
+    then [str, ""]
+  else
+    [(take 1 str2), (delInitLast (tail str2))]
+  where str2 = delInitLast str
 
 
 -- Dado o input de uma fórmula, envolta em parênteses, retorna uma lista com o operador
@@ -120,14 +109,15 @@ createFormulaList str = refactorFormulaList (splitOperator str)
 -- ex: "(v((a),(>(c,d))))" ---> FormulaAF
 defineTypeFormulaData :: String -> String
 defineTypeFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )   = "FormulaFF"
-                                | ( ((length x) > 3) && ((length y) == 3) )  = "FormulaFA"
-                                | ( ((length x) == 3) && ((length y) > 3) )  = "FormulaAF"
-                                | otherwise                                  = "FormulaAA" 
-                                where
-                                  formulaList = createFormulaList formulaString
-                                  op = (formulaList !! 0)
-                                  x  = (formulaList !! 1)
-                                  y  = (formulaList !! 2)
+                                    | ( ((length x) > 3) && ((length y) <= 3) )  = "FormulaFA"
+                                    | ( ((length x) <= 3) && ((length y) > 3) )  = "FormulaAF"
+                                    | ( ((length x) == 0) && ((length y) == 0) ) = "Athomic"
+                                    | otherwise                                  = "FormulaAA" 
+                                    where
+                                      formulaList = createFormulaList formulaString
+                                      op = (formulaList !! 0)
+                                      x  = (formulaList !! 1)
+                                      y  = (formulaList !! 2)
 
 
 -- Dada uma fórmula em string, envolta em parênteses, retorna toda a estrutura data Formula
@@ -150,10 +140,8 @@ defineTypeFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )  
 --     }
 -- }
 createFormulaData :: String -> Formula
-createFormulaData formulaString | ( ((length x) >= 3) && ((length y) >= 3) )   = FormulaFF (-1) op (createFormulaData x) (createFormulaData y)
-                                | ( ((length x) >= 3) && ((length y) < 3) )  = FormulaFA (-1) op (createFormulaData x) y
-                                | ( ((length x) < 3) && ((length y) >= 3) )  = FormulaAF (-1) op x (createFormulaData y)
-                                | otherwise                                  = FormulaAA (-1) op x y
+createFormulaData formulaString | ( ((length x) == 0) && ((length y) == 0) ) = Athomic (-1) op
+                                | otherwise                                  = Formula (-1) op (createFormulaData x) (createFormulaData y)
                                 where
                                   formulaList = createFormulaList formulaString
                                   op = (formulaList !! 0)
@@ -182,22 +170,25 @@ processFormula str =
         x = (refactorFormulaList (splitOperator str) !! 1)
         y = (refactorFormulaList (splitOperator str) !! 2)
 
-createArvore:: (Ord a)=> Formula -> Arvore a
-createArvore (x:xs) = createArvore_aux (No Nulo x Nulo) xs
-    where
-        createArvore_aux arvore [] = arvore
-        createArvore_aux arvore (x:xs) = createArvore_aux(insertArvore arvore x) xs
+--createArvore:: (Ord a)=> [] -> Arvore a
+--createArvore (x:xs) = createArvore_aux (No Nulo x Nulo) xs
+    --where
+        --createArvore_aux arvore [] = arvore
+        --createArvore_aux arvore (x:xs) = createArvore_aux(insertArvore arvore x) xs
 
-insertArvore:: (Ord a) => Arvore a -> a -> Arvore a
+--insertArvore:: (Ord a) => Arvore a -> a -> Arvore a
 -- Se a subárvore for Nula, então retorna uma subárvore (Nulo x Nulo)
-insertArvore Nulo x = No Nulo x Nulo
+--insertArvore Nulo x = No Nulo x Nulo
 -- Senão teremos duas subárvores: arv1 e arv2
 -- Verifica as regras (NÃO SEI COMO FAZER KKKKK, só escrevi a ideia msm)
-insertArvore (No arv1 v arv2) x
-        | (op = ">") = No arv1 v arv2
-        | (op = "v") = No arv1 v arv2
-        | (op = "^") = No arv1 v arv2
+--insertArvore (No arv1 v arv2) x
+  --      | (op == ">") = No arv1 v arv2
+  --      | (op == "v") = No arv1 v arv2
+   --     | (op =="^") = No arv1 v arv2
 
+
+--Printa o operador da primeira rodada
+print_teste teste = print((operator (createFormulaData teste)))
 
 
 ------------------------------------------------------
@@ -208,5 +199,7 @@ main = do
     putStrLn "Digite a fórmula:"
     input <- getLine
     let formula = input
+    let teste = createFormulaData "(>((v((^(b,d)),a)),(v(c,a))))"
     let teste = createFormulaList formula
     print $ teste
+
