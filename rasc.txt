@@ -119,6 +119,9 @@ Node {
     right_child = Nulo
 }
 
+
+(>((v((b),(a))),(v((c),(a)))))
+
 Node {
     content = [
         Formula {
@@ -154,6 +157,7 @@ Node {
             ], 
             
             left_child = Nulo, 
+
             right_child = Nulo
         }, 
         
@@ -167,6 +171,58 @@ Node {
         }
     
     },
+    
+    right_child = Nulo
+}
+
+Node {
+    content = [
+        Formula {
+            label = False, 
+            operator = ">", 
+            operand_1 = "(v((b),(a)))",
+            operand_2 = "(v((c),(a)))", 
+            final = False
+        }
+    ], 
+    
+    left_child = Node {
+        content = [
+            Formula {
+                label = True, 
+                operator = "v", 
+                operand_1 = "(b)", 
+                operand_2 = "(a)", 
+                final = False
+            },
+            Formula {
+                label = False, 
+                operator = "v", 
+                operand_1 = "(c)", 
+                operand_2 = "(a)", 
+                final = False
+            }
+        ], 
+        
+        left_child = Node {
+            content = [
+                Athomic {label = True, name = "b", final = False},
+                Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
+            ], 
+            
+            left_child = Nulo, 
+            right_child = Nulo
+        },
+        
+        right_child = Node {
+            content = [
+                Athomic {label = True, name = "a", final = False},
+                Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
+            ], 
+            left_child = Nulo, 
+            right_child = Nulo
+        }
+    }, 
     
     right_child = Nulo
 }

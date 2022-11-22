@@ -223,9 +223,17 @@ applyRule formulaData | ( (label formulaData) == True) && ((operator formulaData
 -- initTree formulaString = Node [createFormulaData formulaString False] Nulo Nulo
 initTree formulaString =
   if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
-    then Node [formulaData] (growTree (nodeChildrenContents !! 0)) Nulo
+    then Node {
+      content = [formulaData],
+      left_child = (growTree (nodeChildrenContents !! 0)),
+      right_child = Nulo
+    }
   else  -- se o nó tem 2 filhos, a árvore ramifica
-    Node [formulaData] (growTree(nodeChildrenContents !! 0)) (growTree(nodeChildrenContents !! 1))
+    Node {
+      content = [formulaData],
+      left_child = (growTree(nodeChildrenContents !! 0)),
+      right_child = (growTree(nodeChildrenContents !! 1))
+    }
    where
     formulaData = createFormulaData formulaString False
     nodeChildrenContents = applyRule formulaData
@@ -254,12 +262,21 @@ growTreeBLA treeNode =
 -- growTree :: [Formula] -> Tree
 growTree nodeContent =
   if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
-    then Node nodeContent (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo) Nulo  -- ++ TAIL NODECONTENT
+    then Node {
+      content = nodeContent,
+      left_child = (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo),
+      right_child = Nulo
+    }
   else
-    Node nodeContent (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo) (Node ((nodeChildrenContents !! 1) ++ (tail nodeContent)) Nulo Nulo)
+    Node {
+      content = nodeContent, 
+      left_child = (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo),
+      right_child = (Node ((nodeChildrenContents !! 1) ++ (tail nodeContent)) Nulo Nulo)
+    }
   where
     firstFormulaData = nodeContent !! 0
     nodeChildrenContents = applyRule firstFormulaData
+
 
 
 isEven num = if (mod num 2) == 0 then 0 else error "Impar"
