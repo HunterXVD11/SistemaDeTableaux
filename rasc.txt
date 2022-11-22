@@ -174,26 +174,41 @@ Node {
     right_child = Nulo
 }
 
+"(>((v((b),(a))),(v((c),(a)))))"
 
 Node {
     content = [
-        Formula {label = False, operator = ">", operand_1 = "(v((b),(a)))", operand_2 = "(v((c),(a)))", final = False}
-    ], 
+        Formula {label = False, operator = ">", operand_1 = "(v((b),(a)))", operand_2 = "(v((c),(a)))", isAthomic = False}
+    ],
+
     left_child = Node {
         content = [
-            Formula {label = True, operator = "v", operand_1 = "(b)", operand_2 = "(a)", final = False},
-            Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
+            Formula {label = True, operator = "v", operand_1 = "(b)", operand_2 = "(a)", isAthomic = False},
+            Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
         ], 
-        left_child = *** Exception: No match in record selector operator
+        
+        left_child = Node {
+            content = [
+                Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True},
+                Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
+            ], 
 
-
-Node {
-    content = [
-        Formula {label = False, operator = ">", operand_1 = "(v((b),(a)))", operand_2 = "(v((c),(a)))", final = False}
-    ], 
-    left_child = Node {
-        content = [
-            Formula {label = True, operator = "v", operand_1 = "(b)", operand_2 = "(a)", final = False},
-            Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
-        ], 
-        left_child = *** Exception: Luiz.hs:(193,1)-(215,80): Non-exhaustive patterns in function applyRule
+            left_child = Node {
+                content = [
+                    Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
+                    Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
+                    Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
+                ], 
+                
+                left_child = Node {
+                    content = [
+                        Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
+                        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
+                        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
+                        Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
+                    ], 
+                    
+                    left_child = Node {
+                        content = [
+                            Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
+                            Formula {label = FalsInterrupted.

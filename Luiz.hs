@@ -254,36 +254,43 @@ initTree formulaString =
 
 findFirstCompoundFormula nodeContent = 
   if (length compoundFormulas) == 0 
-    then 
+    then nodeContent !! 0
   else
     compoundFormulas !! 0
   where
     compoundFormulas = [formula | formula <- nodeContent, length (operator formula) > 0]
   
 
-nuu :: (Struct -> Bool) -> [Struct] -> Bool
-nuu function nodeContent = and(bools)
+verifyContentCondition :: (Formula -> Bool) -> [Formula] -> Bool
+verifyContentCondition function nodeContent = and(bools)
     where
         bools = map function nodeContent
 
 
 -- growTree :: [Formula] -> Tree
-growTree nodeContent =
-  if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
-    then Node {
-      content = nodeContent,
-      left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
-      right_child = Nulo
-    }
-  else
-    Node {
-      content = nodeContent, 
-      left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
-      right_child = growTree( (nodeChildrenContents !! 1) ++ (tail nodeContent) )
-    }
-  where
-    firstCompoundFormula = findFirstCompoundFormula nodeContent
-    nodeChildrenContents = applyRule firstCompoundFormula
+growTree nodeContent | verifyContentCondition isAthomic nodeContent
+                      = Node {
+                        content = nodeContent,
+                        left_child = Nulo,
+                        right_child = Nulo
+                      }
+
+                     | otherwise     
+                      = if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
+                        then Node {
+                          content = nodeContent,
+                          left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
+                          right_child = Nulo
+                        }
+                      else
+                        Node {
+                          content = nodeContent, 
+                          left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
+                          right_child = growTree( (nodeChildrenContents !! 1) ++ (tail nodeContent) )
+                        }
+                      where
+                        firstCompoundFormula = findFirstCompoundFormula nodeContent
+                        nodeChildrenContents = applyRule firstCompoundFormula
 
 
 
