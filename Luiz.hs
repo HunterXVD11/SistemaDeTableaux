@@ -264,14 +264,14 @@ growTree nodeContent =
   if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
     then Node {
       content = nodeContent,
-      left_child = (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo),
+      left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
       right_child = Nulo
     }
   else
     Node {
       content = nodeContent, 
-      left_child = (Node ((nodeChildrenContents !! 0) ++ (tail nodeContent)) Nulo Nulo),
-      right_child = (Node ((nodeChildrenContents !! 1) ++ (tail nodeContent)) Nulo Nulo)
+      left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
+      right_child = growTree( (nodeChildrenContents !! 1) ++ (tail nodeContent) )
     }
   where
     firstFormulaData = nodeContent !! 0
