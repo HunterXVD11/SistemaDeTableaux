@@ -185,3 +185,15 @@ Node {
             Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
         ], 
         left_child = *** Exception: No match in record selector operator
+
+
+Node {
+    content = [
+        Formula {label = False, operator = ">", operand_1 = "(v((b),(a)))", operand_2 = "(v((c),(a)))", final = False}
+    ], 
+    left_child = Node {
+        content = [
+            Formula {label = True, operator = "v", operand_1 = "(b)", operand_2 = "(a)", final = False},
+            Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
+        ], 
+        left_child = *** Exception: Luiz.hs:(193,1)-(215,80): Non-exhaustive patterns in function applyRule

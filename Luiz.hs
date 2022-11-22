@@ -16,12 +16,7 @@ data Formula =
     operator  :: String,
     operand_1:: String,
     operand_2 :: String,
-    final :: Bool
-  } | 
-  Athomic {
-    label :: Bool,
-    name :: String,
-    final :: Bool
+    isAthomic :: Bool
   } deriving (Show)
 
 
@@ -163,7 +158,7 @@ defineTypeFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )  
 --                                   y  = (formulaList !! 2)
 
 createFormulaData :: String -> Bool -> Formula
-createFormulaData formulaString label | ( ((length x) == 0) && ((length y) == 0) ) = Athomic label op False
+createFormulaData formulaString label | ( ((length x) == 0) && ((length y) == 0) ) = Formula label "" op "" True
                                       | otherwise                                  = Formula label op x y False
                                       where
                                         formulaList = createFormulaList formulaString
@@ -218,6 +213,12 @@ applyRule formulaData | ( (label formulaData) == True) && ((operator formulaData
                       
                       | ( (label formulaData) == False) && ((operator formulaData) == "~" )
                         = [ [(createFormulaData (operand_1 formulaData) True)] ]
+                      
+                      | ( (operator formulaData) == "" ) 
+                        = [ [formulaData] ]
+
+                      | otherwise
+                        = error "ERRO no applyRule!"
 
 
 -- initTree formulaString = Node [createFormulaData formulaString False] Nulo Nulo
@@ -239,15 +240,6 @@ initTree formulaString =
     nodeChildrenContents = applyRule formulaData
 
 
-growTreeBLA treeNode = 
-  if (length subformulaMatrix) == 1  -- Se só tem um elemento na matriz de retorno, a árvore NÃO ramifica
-    then (subformulaMatrix !! 0) ++ (tail(content treeNode))
-  else  -- Se tem 2, a árvore ramifica
-    (subformulaMatrix !! 0) -- linha provisória
-  where 
-    subformulaMatrix = applyRule ((content treeNode)!!0)
-
-
 -- growTree formulaString formulaLabel = 
 --   if (length subformulaMatrix) == 1  -- Se só tem um elemento na matriz de retorno, a árvore NÃO ramifica
 --     -- then Node ( (subformulaMatrix !! 0) ++ (tail(content treeNode)) ) 
@@ -258,6 +250,22 @@ growTreeBLA treeNode =
 --     treeNode = Node [createFormulaData formulaString formulaLabel] Nulo Nulo
 --     formulaData = createFormulaData formulaString formulaLabel
 --     subformulaMatrix = applyRule formulaData
+
+
+findFirstCompoundFormula nodeContent = 
+  if (length compoundFormulas) == 0 
+    then 
+  else
+    compoundFormulas !! 0
+  where
+    compoundFormulas = [formula | formula <- nodeContent, length (operator formula) > 0]
+  
+
+nuu :: (Struct -> Bool) -> [Struct] -> Bool
+nuu function nodeContent = and(bools)
+    where
+        bools = map function nodeContent
+
 
 -- growTree :: [Formula] -> Tree
 growTree nodeContent =
@@ -274,12 +282,14 @@ growTree nodeContent =
       right_child = growTree( (nodeChildrenContents !! 1) ++ (tail nodeContent) )
     }
   where
-    firstFormulaData = nodeContent !! 0
-    nodeChildrenContents = applyRule firstFormulaData
+    firstCompoundFormula = findFirstCompoundFormula nodeContent
+    nodeChildrenContents = applyRule firstCompoundFormula
 
 
 
 isEven num = if (mod num 2) == 0 then 0 else error "Impar"
+
+
 
 
 -- Atributo final::Bool para Athomic!! Quando um athomic "nasce", ele nasce com final = False. 
