@@ -236,3 +236,16 @@ Node {
 =========================================================================
 
 =========================================================================
+[
+    [
+        Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
+        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
+        Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True}
+    ],
+
+    [
+        Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
+        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
+        Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True}
+    ]
+]

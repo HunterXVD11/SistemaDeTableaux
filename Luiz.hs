@@ -26,7 +26,7 @@ data Tree a =
     content :: [a],
     left_child :: Tree a,
     right_child :: Tree a
-  } deriving (Show)
+  } deriving (Show, Eq)
 
 
 
@@ -257,7 +257,25 @@ growTree nodeContent | verifyContentCondition isAthomic nodeContent
                         nodeChildrenContents = applyRule firstCompoundFormula
 
 
--- findLeaf tableauxTree = 
+-- findLeaf tableauxTree | (left_child tableauxTree) != Nulo && (right_child tableauxTree) != Nulo
+--                         = findLeaf (left_child tableauxTree)
+--                       | (left_child tableauxTree) != Nulo && (right_child tableauxTree) == Nulo
+--                         = findLeaf (right_child tableauxTree)
+--                       | otherwise
+--                         = tableauxTree
+
+
+treeLeaves tree = case tree of
+    Nulo             -> []
+    Node v Nulo Nulo -> v:[]
+    Node _ t1 t2     -> treeLeaves t1 ++ treeLeaves t2
+
+
+-- foo tableauxTree = 
+--   if tableauxTree == Nulo
+--     then []
+--   else
+--     [foo (left_child tableauxTree)]
 
 
 -- validateTableaux tableauxTree = 
