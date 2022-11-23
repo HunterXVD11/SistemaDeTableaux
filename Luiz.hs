@@ -17,7 +17,7 @@ data Formula =
     operand_1:: String,
     operand_2 :: String,
     isAthomic :: Bool
-  } deriving (Show)
+  } deriving (Show, Eq)
 
 
 -- data Tree a = Nulo | Node (Tree a) [a] (Tree a)
@@ -54,6 +54,10 @@ delInitLast list = delByIndex (delByIndex list 0) ((length list) - 2)
 appendElement :: a -> [a] -> [a]
 appendElement el [] = [el]
 appendElement el (x:xs) = x : appendElement el xs
+
+
+removeElement :: Eq a => a -> [a] -> [a]
+removeElement element list = filter (\e -> e/=element) list
 
 
 -- Faz um match da posição de abertura e fechamento de um parêntese
@@ -279,17 +283,18 @@ growTree nodeContent | verifyContentCondition isAthomic nodeContent
                       = if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
                         then Node {
                           content = nodeContent,
-                          left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
+                          left_child = growTree( (nodeChildrenContents !! 0) ++ filteredNodeContent ),
                           right_child = Nulo
                         }
                       else
                         Node {
                           content = nodeContent, 
-                          left_child = growTree( (nodeChildrenContents !! 0) ++ (tail nodeContent) ),
-                          right_child = growTree( (nodeChildrenContents !! 1) ++ (tail nodeContent) )
+                          left_child = growTree( (nodeChildrenContents !! 0) ++ filteredNodeContent ),
+                          right_child = growTree( (nodeChildrenContents !! 1) ++ filteredNodeContent )
                         }
                       where
                         firstCompoundFormula = findFirstCompoundFormula nodeContent
+                        filteredNodeContent = removeElement firstCompoundFormula nodeContent
                         nodeChildrenContents = applyRule firstCompoundFormula
 
 

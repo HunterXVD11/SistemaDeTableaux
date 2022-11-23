@@ -174,13 +174,15 @@ Node {
     right_child = Nulo
 }
 
+=========================================================================
 "(>((v((b),(a))),(v((c),(a)))))"
+
 
 Node {
     content = [
         Formula {label = False, operator = ">", operand_1 = "(v((b),(a)))", operand_2 = "(v((c),(a)))", isAthomic = False}
-    ],
-
+    ], 
+    
     left_child = Node {
         content = [
             Formula {label = True, operator = "v", operand_1 = "(b)", operand_2 = "(a)", isAthomic = False},
@@ -192,23 +194,45 @@ Node {
                 Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True},
                 Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
             ], 
-
+            
             left_child = Node {
                 content = [
                     Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
                     Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
-                    Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
+                    Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True}
                 ], 
                 
-                left_child = Node {
-                    content = [
-                        Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
-                        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
-                        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
-                        Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
-                    ], 
-                    
-                    left_child = Node {
-                        content = [
-                            Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
-                            Formula {label = FalsInterrupted.
+                left_child = Nulo, 
+                right_child = Nulo
+            }, 
+            
+            right_child = Nulo
+
+        }, 
+        
+        right_child = Node {
+            content = [
+                Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
+                Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", isAthomic = False}
+            ], 
+            
+            left_child = Node {
+                content = [
+                    Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
+                    Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
+                    Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True}
+                ], 
+                
+                left_child = Nulo, 
+                right_child = Nulo
+            }, 
+            
+            right_child = Nulo
+        }
+    }, 
+    
+    right_child = Nulo
+}
+=========================================================================
+
+=========================================================================
