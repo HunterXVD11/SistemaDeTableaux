@@ -20,9 +20,6 @@ data Formula =
   } deriving (Show, Eq)
 
 
--- data Tree a = Nulo | Node (Tree a) [a] (Tree a)
---   deriving (Show)
-
 data Tree a = 
   Nulo |
   Node {
@@ -135,32 +132,6 @@ defineTypeFormulaData formulaString | ( ((length x) > 3) && ((length y) > 3) )  
 -- Dada uma fórmula em string, envolta em parênteses, retorna toda a estrutura data Formula
 -- criada recursivamente, contendo fórmulas e subfórmulas até chegar nas fórmulas atômicas
 -- ex: "(>((v(b,a)),(v(c,a))))" --->
--- Formula {
---     label = -1, 
---     operator = ">", 
---     operand_1 = Formula {
---         label = -1, 
---         operator = "v", 
---         operand_1 = Athomic {label = -1, name = "b"}, 
---         operand_2 = Athomic {label = -1, name = "a"}
---     }, 
---     operand_2 = Formula {
---         label = -1, 
---         operator = "v", 
---         operand_1 = Athomic {label = -1, name = "c"}, 
---         operand_2 = Athomic {label = -1, name = "a"}
---     }
--- }
-
--- createFormulaData :: String -> Formula
--- createFormulaData formulaString | ( ((length x) == 0) && ((length y) == 0) ) = Athomic (-1) op
---                                 | otherwise                                  = Formula (-1) op (createFormulaData x) (createFormulaData y)
---                                 where
---                                   formulaList = createFormulaList formulaString
---                                   op = (formulaList !! 0)
---                                   x  = (formulaList !! 1)
---                                   y  = (formulaList !! 2)
-
 createFormulaData :: String -> Bool -> Formula
 createFormulaData formulaString label | ( ((length x) == 0) && ((length y) == 0) ) = Formula label "" op "" True
                                       | otherwise                                  = Formula label op x y False
@@ -244,18 +215,6 @@ initTree formulaString =
     nodeChildrenContents = applyRule formulaData
 
 
--- growTree formulaString formulaLabel = 
---   if (length subformulaMatrix) == 1  -- Se só tem um elemento na matriz de retorno, a árvore NÃO ramifica
---     -- then Node ( (subformulaMatrix !! 0) ++ (tail(content treeNode)) ) 
---     then Node 
---   else  -- Se tem 2, a árvore ramifica
---    Node (subformulaMatrix !! 0) -- linha provisória
---   where 
---     treeNode = Node [createFormulaData formulaString formulaLabel] Nulo Nulo
---     formulaData = createFormulaData formulaString formulaLabel
---     subformulaMatrix = applyRule formulaData
-
-
 findFirstCompoundFormula nodeContent = 
   if (length compoundFormulas) == 0 
     then nodeContent !! 0
@@ -298,17 +257,11 @@ growTree nodeContent | verifyContentCondition isAthomic nodeContent
                         nodeChildrenContents = applyRule firstCompoundFormula
 
 
-
-isEven num = if (mod num 2) == 0 then 0 else error "Impar"
-
+-- findLeaf tableauxTree = 
 
 
+-- validateTableaux tableauxTree = 
 
--- Atributo final::Bool para Athomic!! Quando um athomic "nasce", ele nasce com final = False. 
--- Na aplicação das regras, se a fórmula for athomic e label = True, quer dizer que ela teve sua 
--- checagem final e não pode ser mais desenvolvida (final = True). Para parar a montagem da árvore 
--- do tableaux, todas as formulas predentes no no da arvore Tem que ter final = True (usar um map pra 
--- verificar isso)
 
 ------------------------------------------------------
 ----------------------- MAIN -------------------------
