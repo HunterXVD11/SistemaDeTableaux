@@ -197,6 +197,8 @@ findFirstCompoundFormula nodeContent =
     compoundFormulas = [formula | formula <- nodeContent, length (operator formula) > 0]
   
 
+-- Quando isAthomic é passada como parâmetro junto a uma lista de fórmulas,
+-- verifica se todas as fórmulas são atômicas
 verifyContentCondition :: (Formula -> Bool) -> [Formula] -> Bool
 verifyContentCondition function nodeContent = and(bools)
     where
@@ -283,5 +285,5 @@ main = do
     putStrLn "Digite a fórmula:"
     input <- getLine
     let formula = input
-    let teste = validateTableaux(initTree formula)
+    let teste = showResultTableaux(initTree formula)
     print $ teste
