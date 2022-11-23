@@ -98,6 +98,7 @@ refactorFormulaList oldFormulaList = (init oldFormulaList) ++ (splitOperands (ol
 
 -- Separa o operador da fórmula do restante dos operandos
 -- ex: "(>((v(b,a)),(v(c,a))))" ---> [">", "(v(b,a)),(v(c,a))"]
+splitOperator :: [Char] -> [[Char]]
 splitOperator str = 
   if (length str) == 1
     then [str, ""]
@@ -143,7 +144,7 @@ createFormulaData formulaString label | ( ((length x) == 0) && ((length y) == 0)
                                         y  = (formulaList !! 2)
 
 
--- applyRule :: Tree Formula -> [Formula]
+applyRule :: Formula -> [[Formula]]
 applyRule formulaData | ( (label formulaData) == True) && ((operator formulaData) == ">" ) 
                         = [ [(createFormulaData (operand_1 formulaData) False)], [(createFormulaData (operand_2 formulaData) True)] ]
 
@@ -175,7 +176,7 @@ applyRule formulaData | ( (label formulaData) == True) && ((operator formulaData
                         = error "ERRO no applyRule!"
 
 
--- initTree formulaString = Node [createFormulaData formulaString False] Nulo Nulo
+initTree :: String -> Tree Formula
 initTree formulaString =
   if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
     then Node {
@@ -194,6 +195,7 @@ initTree formulaString =
     nodeChildrenContents = applyRule formulaData
 
 
+findFirstCompoundFormula :: [Formula] -> Formula
 findFirstCompoundFormula nodeContent = 
   if (length compoundFormulas) == 0 
     then nodeContent !! 0
@@ -209,7 +211,7 @@ verifyContentCondition function nodeContent = and(bools)
         bools = map function nodeContent
 
 
--- growTree :: [Formula] -> Tree
+growTree :: [Formula] -> Tree Formula
 growTree nodeContent | verifyContentCondition isAthomic nodeContent
                       = Node {
                         content = nodeContent,
@@ -236,15 +238,7 @@ growTree nodeContent | verifyContentCondition isAthomic nodeContent
                         nodeChildrenContents = applyRule firstCompoundFormula
 
 
-invertLabel formulaData = Formula {
-    label = not (label formulaData),
-    operator = (operator formulaData),
-    operand_1 = (operand_1 formulaData),
-    operand_2 = (operand_2 formulaData),
-    isAthomic = (isAthomic formulaData)
-}
-
-
+findTreeLeaves :: Tree a -> [[a]]
 findTreeLeaves tree = case tree of
     Nulo             -> []
     Node v Nulo Nulo -> v:[]
@@ -257,29 +251,27 @@ validateLeafContent (formula:formulas) | (length  contradictions) > 0 = True
                                        | otherwise                    = validateLeafContent formulas
                                        where contradictions = [ x | x<-formulas, (operand_1 formula == operand_1 x) && (label formula /= label x) ]
 
--- [V:a, F:b, F:c, F:a]  --> [F:a]
 
--- [V:a, F:b, V:a, F:c]
-
-
+isTautology :: Tree Formula -> Bool
 isTautology tree = and(map validateLeafContent leaves)
   where
     leaves = findTreeLeaves tree
 
 
+validateTableaux :: Tree Formula -> String
 validateTableaux tree | (isTautology tree) = "Tautologia."
-                      | otherwise = "Falsificável.\nContraprova: " ++ show(counterProofFormula)
+                      | otherwise = "Falsificavel. Contraprova: " ++ show(counterProofFormula)
                       where
                         counterProofIndex = elemIndex False (map validateLeafContent (findTreeLeaves tree))
                         counterProofFormula = (findTreeLeaves tree) !! (fromJust counterProofIndex)
 
--- validateTableaux tableauxTree = 
 
 
 ------------------------------------------------------
 ----------------------- MAIN -------------------------
 ------------------------------------------------------
 
+main :: IO ()
 main = do
     putStrLn "Digite a fórmula:"
     input <- getLine
