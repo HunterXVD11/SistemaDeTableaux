@@ -1,182 +1,6 @@
-========== createFormulaData "(>((v((b),(a))),(v((c),(a)))))" =========
-Formula {
-    label = -1, 
-    operator = ">", 
-    operand_1 = Formula {
-        label = -1, 
-        operator = "v", 
-        operand_1 = Athomic {label = -1, name = "b"}, 
-        operand_2 = Athomic {label = -1, name = "a"}
-    }, 
-    operand_2 = Formula {
-        label = -1, 
-        operator = "v", 
-        operand_1 = Athomic {label = -1, name = "c"}, 
-        operand_2 = Athomic {label = -1, name = "a"}
-    }
-}
-================================================================
-
-
-================= createFormulaData "(v((b),(a)))" =================
-Formula {
-    label = -1, 
-    operator = "v", 
-    operand_1 = Athomic {label = -1, name = "b"}, 
-    operand_2 = Athomic {label = -1, name = "a"}
-}
-================================================================
-
-
-====================== (v((a),(>((c),(d))))) ======================
-FormulaAF {
-    label = -1,
-    operator = "v",
-    operand_1_athomic = "(a)",
-    operand_2_formula = FormulaAA {
-        label = -1,
-        operator = ">",
-        operand_1_athomic = "c",
-        operand_2_athomic = ",d"
-    }
-}
-================================================================
-
-
-======================= (v((>((c),(d))),(a))) ======================
-FormulaFA {
-    label = -1,
-    operator = "v",
-    operand_1_formula = FormulaAA {
-        label = -1,
-        operator = ">", 
-        operand_1_athomic = "c", 
-        operand_2_athomic = ",d"
-    },
-    operand_2_athomic = "(a)"
-}
-
-------------------------------------------------------
-FormulaFF {
-    label = -1, 
-    operator = ">", 
-    operand_1_formula = FormulaFA {
-        label = -1, 
-        operator = "v", 
-        operand_1_formula = 
-        FormulaAA {
-            label = -1, 
-            operator = "^", 
-            operand_1_athomic = "b", 
-            operand_2_athomic = ",d"}, 
-            operand_2_athomic = "a"}, 
-            operand_2_formula = 
-            FormulaAA {label = -1, operator = "v", operand_1_athomic = "c", operand_2_athomic = ",a"}}
-
-=============================================================================================================
-
-Node {
-    content = [
-        Formula {
-            label = False, 
-            operator = ">", 
-            operand_1 = "(^((b),(a)))", 
-            operand_2 = "(v((c),(a)))", final = False
-        }
-    ],
-
-    left_child = Node {
-        content = [
-            Formula {
-                label = True, 
-                operator = "^", 
-                operand_1 = "(b)", 
-                operand_2 = "(a)", 
-                final = False
-            },
-            Formula {
-                label = False, 
-                operator = "v", 
-                operand_1 = "(c)", 
-                operand_2 = "(a)", final = False
-            }
-        ], 
-        
-        left_child = Node {
-            content = [
-                Athomic {label = True, name = "b", final = False},
-                Athomic {label = True, name = "a", final = False}
-            ],
-            
-            left_child = Nulo,
-
-            right_child = Nulo
-        },
-
-        right_child = Nulo
-    }, 
-    
-    right_child = Nulo
-}
-
-
-(>((v((b),(a))),(v((c),(a)))))
-
-Node {
-    content = [
-        Formula {
-            label = False, 
-            operator = ">", 
-            operand_1 = "(v((b),(a)))",
-            operand_2 = "(v((c),(a)))", 
-            final = False
-        }
-    ], 
-    
-    left_child = Node {
-        content = [
-            Formula {
-                label = True, 
-                operator = "v", 
-                operand_1 = "(b)", 
-                operand_2 = "(a)", 
-                final = False
-            },
-            Formula {
-                label = False, 
-                operator = "v", 
-                operand_1 = "(c)", 
-                operand_2 = "(a)", 
-                final = False
-            }
-        ], 
-        
-        left_child = Node {
-            content = [
-                Athomic {label = True, name = "b", final = False},
-                Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
-            ], 
-            
-            left_child = Nulo, 
-            right_child = Nulo
-        },
-        
-        right_child = Node {
-            content = [
-                Athomic {label = True, name = "a", final = False},
-                Formula {label = False, operator = "v", operand_1 = "(c)", operand_2 = "(a)", final = False}
-            ], 
-            left_child = Nulo, 
-            right_child = Nulo
-        }
-    }, 
-    
-    right_child = Nulo
-}
-
 =========================================================================
+Exemplo 1: (b v a) -> (c v a)
 "(>((v((b),(a))),(v((c),(a)))))"
-
 
 Node {
     content = [
@@ -233,19 +57,46 @@ Node {
     
     right_child = Nulo
 }
+
+Falsificavel. Contraprova: False: c // False: a // True: b
 =========================================================================
 
-=========================================================================
-[
-    [
-        Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
-        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
-        Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True}
-    ],
 
-    [
-        Formula {label = False, operator = "", operand_1 = "c", operand_2 = "", isAthomic = True},
-        Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},
-        Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True}
-    ]
-]
+
+=========================================================================
+Exemplo 2: b -> (a ∧ (b ∨ a))
+"(>((b),(^((a),(v((b),(a)))))))"
+
+Node {content = [Formula {label = False, operator = ">", operand_1 = "(b)", operand_2 = "(^((a),(v((b),(a)))))", isAthomic = False}], left_child = Node {content = [Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True},Formula {label = False, operator = "^", operand_1 = "(a)", operand_2 = "(v((b),(a)))", isAthomic = False}], left_child = Node {content = [Formula {label = False, operator = 
+"", operand_1 = "a", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True}], left_child = Nulo, right_child = Nulo}, right_child = Node {content = [Formula {label = False, operator = "v", operand_1 = "(b)", operand_2 = "(a)", isAthomic = False},Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True}], left_child = Node {content = [Formula {label = False, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True},Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True}], left_child = Nulo, right_child = Nulo}, right_child = Nulo}}, right_child = Nulo}
+
+Falsificavel. Contraprova: False: a // True: b
+=========================================================================
+
+
+
+=========================================================================
+Exemplo 3: a -> (a -> (b -> a))
+"(>((a),(>((a),(>((b),(a)))))))"
+
+Node {content = [Formula {label = False, operator = ">", operand_1 = "(a)", operand_2 = "(>((a),(>((b),(a)))))", isAthomic = False}], left_child = Node {content = [Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},Formula {label = False, operator = ">", operand_1 = "(a)", operand_2 = "(>((b),(a)))", isAthomic = False}], left_child = Node {content = [Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},Formula {label = False, operator = ">", operand_1 = "(b)", operand_2 = "(a)", isAthomic 
+= False},Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True}], left_child = Node {content = [Formula {label = True, operator = "", operand_1 = "b", operand_2 = "", isAthomic = True},Formula {label = False, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "a", operand_2 = "", isAthomic = True}], left_child = Nulo, right_child = Nulo}, right_child = Nulo}, right_child = Nulo}, right_child = Nulo}
+
+Tautologia.
+=========================================================================
+
+
+
+=========================================================================
+Exemplo 4: ( p v (q ^ r) ) -> ( (p v q) ^ (p v r) )
+"(>((v((p),(^((q),(r))))),(^((v((p),(q))),(v((p),(r)))))))"
+
+Node {content = [Formula {label = False, operator = ">", operand_1 = "(v((p),(^((q),(r)))))", operand_2 = "(^((v((p),(q))),(v((p),(r)))))", isAthomic = False}], left_child = Node {content = [Formula {label = True, operator = "v", operand_1 = "(p)", operand_2 = "(^((q),(r)))", isAthomic = False},Formula {label = False, operator = "^", operand_1 = "(v((p),(q)))", operand_2 = "(v((p),(r)))", isAthomic = False}], left_child = 
+Node {content = [Formula {label = True, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True},Formula {label = False, operator = "^", operand_1 = "(v((p),(q)))", operand_2 = "(v((p),(r)))", isAthomic = False}], left_child = Node {content = [Formula {label = False, operator = "v", operand_1 = "(p)", operand_2 = "(q)", isAthomic = False},Formula {label = True, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True}], left_child = Node {content = [Formula {label = False, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True},Formula {label = False, operator = "", operand_1 = "q", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True}], left_child = Nulo, right_child = Nulo}, right_child = Nulo}, right_child = Node {content = [Formula {label = False, operator = "v", operand_1 = "(p)", operand_2 = "(r)", isAthomic = False},Formula {label = True, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True}], left_child = Node {content = [Formula {label = False, operator = "", operand_1 = "p", operand_2 = "", isAthomic = 
+True},Formula {label = False, operator = "", operand_1 = "r", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True}], left_child = Nulo, right_child = Nulo}, right_child = Nulo}}, right_child = Node {content = [Formula {label = True, operator = "^", operand_1 = "(q)", operand_2 = "(r)", isAthomic = False},Formula {label = False, operator = "^", operand_1 
+= "(v((p),(q)))", operand_2 = "(v((p),(r)))", isAthomic = False}], left_child = Node {content = [Formula {label = True, operator = "", operand_1 = "q", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "r", operand_2 = "", isAthomic = True},Formula {label = False, operator = "^", operand_1 = "(v((p),(q)))", operand_2 = "(v((p),(r)))", isAthomic = False}], left_child = Node {content = [Formula {label = False, operator = "v", operand_1 = "(p)", operand_2 = "(q)", isAthomic = False},Formula {label = True, operator = "", operand_1 = "q", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "r", operand_2 = "", isAthomic = True}], left_child 
+= Node {content = [Formula {label = False, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True},Formula {label = False, operator 
+= "", operand_1 = "q", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "q", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "r", operand_2 = "", isAthomic = True}], left_child = Nulo, right_child = Nulo}, right_child = Nulo}, right_child = Node {content = [Formula {label = False, operator = "v", operand_1 = "(p)", operand_2 = "(r)", isAthomic = False},Formula {label = True, operator = "", operand_1 = "q", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "r", operand_2 = "", isAthomic = True}], left_child = Node {content = [Formula {label = False, operator = "", operand_1 = "p", operand_2 = "", isAthomic = True},Formula {label = False, operator = "", operand_1 = "r", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "q", operand_2 = "", isAthomic = True},Formula {label = True, operator = "", operand_1 = "r", operand_2 = "", isAthomic = True}], left_child = Nulo, right_child = Nulo}, right_child = Nulo}}, right_child = Nulo}}, right_child = Nulo}
+
+Tautologia.
+=========================================================================
