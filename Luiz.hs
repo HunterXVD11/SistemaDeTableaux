@@ -159,7 +159,7 @@ applyRule formulaData | ( (label formulaData) == True) && ((operator formulaData
 
 -- Dada uma fórmula em string, a função cria o primeiro nó dá Árvore de Tableaux e desenvolve ela
 -- pelos filhos da esquerda e direita, dependendo da regra aplicada
--- ex: "(>((v((b),(a))),(v((c),(a)))))" ---> [Árvore completa (ver exemplos do txt)]
+-- ex: "(>((v((b),(a))),(v((c),(a))))" ---> [Árvore completa (ver exemplos do txt)]
 initTree :: String -> Tree Formula
 initTree formulaString =
   if (length nodeChildrenContents) == 1  -- Se o nó só tem 1 filho, a árvore NÃO ramifica
@@ -250,7 +250,7 @@ findTreeLeaves tree = case tree of
     Node _ t1 t2     -> findTreeLeaves t1 ++ findTreeLeaves t2
 
 
--- Dada uma lista de fórmulas (conteúdo de uma árvore), retorna True se as fórmulas possuem contradição ou False senão
+-- Dada uma lista de fórmulas (conteúdo de um nó folha da árvore), retorna True se as fórmulas possuem contradição ou False senão
 validateLeafContent :: [Formula] -> Bool
 validateLeafContent [] = False
 validateLeafContent (formula:formulas) | (length  contradictions) > 0 = True
@@ -265,13 +265,23 @@ isTautology tree = and(map validateLeafContent leaves)
     leaves = findTreeLeaves tree
 
 
+-- Transforma uma estrutura de fórmula atômica em uma string mais amigáel :)
+stringAthomic :: Formula -> String
+stringAthomic formulaDataAthomic = 
+  if (label formulaDataAthomic) 
+   then "True: " ++ (operand_1 formulaDataAthomic)
+  else "False: " ++ (operand_1 formulaDataAthomic)
+
+
+
 -- Dada uma árvore, mostra na tela o resultado do processo de Tableaux
 showResultTableaux :: Tree Formula -> String
 showResultTableaux tree | (isTautology tree) = "Tautologia."
-                        | otherwise = "Falsificavel. Contraprova: " ++ show(counterProofFormula)
+                        | otherwise = "Falsificavel. Contraprova: " ++ show(prettyAthomics)
                           where
                             counterProofIndex = elemIndex False (map validateLeafContent (findTreeLeaves tree))
-                            counterProofFormula = (findTreeLeaves tree) !! (fromJust counterProofIndex)
+                            counterProofFormulas = (findTreeLeaves tree) !! (fromJust counterProofIndex)
+                            prettyAthomics = intercalate " // " (map stringAthomic counterProofFormulas)
 
 
 
