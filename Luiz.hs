@@ -3,6 +3,7 @@
 ------------------------------------------------------
 
 import Data.List
+import Data.Maybe
 
 
 
@@ -142,28 +143,6 @@ createFormulaData formulaString label | ( ((length x) == 0) && ((length y) == 0)
                                         y  = (formulaList !! 2)
 
 
--- (Israel que sabe explicar)
--- (serve para debugar)
--- ex: ???
-processFormula ::  String -> [String]
-processFormula str = 
-    if (length str) >= 8
-        then
-        if (length x) >= 8 && (length y) >= 8
-            then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 1)++ processFormula (refactorFormulaList (splitOperator str) !! 2))
-        else if (length x) >= 8 && (length y) < 8
-            then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 1))
-        else if (length x) < 8 && (length y) >= 8
-            then (refactorFormulaList (splitOperator str) ++ processFormula (refactorFormulaList (splitOperator str) !! 2))
-        else
-            (refactorFormulaList (splitOperator str))
-    else
-        (refactorFormulaList (splitOperator str))
-    where 
-        x = (refactorFormulaList (splitOperator str) !! 1)
-        y = (refactorFormulaList (splitOperator str) !! 2)
-
-
 -- applyRule :: Tree Formula -> [Formula]
 applyRule formulaData | ( (label formulaData) == True) && ((operator formulaData) == ">" ) 
                         = [ [(createFormulaData (operand_1 formulaData) False)], [(createFormulaData (operand_2 formulaData) True)] ]
@@ -257,26 +236,42 @@ growTree nodeContent | verifyContentCondition isAthomic nodeContent
                         nodeChildrenContents = applyRule firstCompoundFormula
 
 
--- findLeaf tableauxTree | (left_child tableauxTree) != Nulo && (right_child tableauxTree) != Nulo
---                         = findLeaf (left_child tableauxTree)
---                       | (left_child tableauxTree) != Nulo && (right_child tableauxTree) == Nulo
---                         = findLeaf (right_child tableauxTree)
---                       | otherwise
---                         = tableauxTree
+invertLabel formulaData = Formula {
+    label = not (label formulaData),
+    operator = (operator formulaData),
+    operand_1 = (operand_1 formulaData),
+    operand_2 = (operand_2 formulaData),
+    isAthomic = (isAthomic formulaData)
+}
 
 
-treeLeaves tree = case tree of
+findTreeLeaves tree = case tree of
     Nulo             -> []
     Node v Nulo Nulo -> v:[]
-    Node _ t1 t2     -> treeLeaves t1 ++ treeLeaves t2
+    Node _ t1 t2     -> findTreeLeaves t1 ++ findTreeLeaves t2
 
 
--- foo tableauxTree = 
---   if tableauxTree == Nulo
---     then []
---   else
---     [foo (left_child tableauxTree)]
+validateLeafContent :: [Formula] -> Bool
+validateLeafContent [] = False
+validateLeafContent (formula:formulas) | (length  contradictions) > 0 = True
+                                       | otherwise                    = validateLeafContent formulas
+                                       where contradictions = [ x | x<-formulas, (operand_1 formula == operand_1 x) && (label formula /= label x) ]
 
+-- [V:a, F:b, F:c, F:a]  --> [F:a]
+
+-- [V:a, F:b, V:a, F:c]
+
+
+isTautology tree = and(map validateLeafContent leaves)
+  where
+    leaves = findTreeLeaves tree
+
+
+validateTableaux tree | (isTautology tree) = "Tautologia."
+                      | otherwise = "Falsificável.\nContraprova: " ++ show(counterProofFormula)
+                      where
+                        counterProofIndex = elemIndex False (map validateLeafContent (findTreeLeaves tree))
+                        counterProofFormula = (findTreeLeaves tree) !! (fromJust counterProofIndex)
 
 -- validateTableaux tableauxTree = 
 
@@ -289,5 +284,5 @@ main = do
     putStrLn "Digite a fórmula:"
     input <- getLine
     let formula = input
-    let teste = createFormulaList formula
+    let teste = validateTableaux(initTree formula)
     print $ teste
